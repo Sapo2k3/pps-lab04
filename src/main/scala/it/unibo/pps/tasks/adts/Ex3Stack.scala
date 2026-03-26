@@ -1,7 +1,7 @@
 package it.unibo.pps.tasks.adts
 
-import it.unibo.pps.u03.extensionmethods.Sequences.Sequence, Sequence.*
-import it.unibo.pps.u03.extensionmethods.Optionals.Optional, Optional.*
+import it.unibo.pps.u03.Sequences.Sequence, Sequence.*
+import it.unibo.pps.u03.Optionals.Optional, Optional.*
 
 /*  Exercise 3: 
  *  Implement a Stack ADT
@@ -22,9 +22,14 @@ object Ex3Stacks:
       def asSequence(): Sequence[A]
 
   object StackImpl extends StackADT:
-    type Stack[A] = Nothing
-    def empty[A]: Stack[A] = ???
+
+    case class Stck[A](stack: Sequence[A])
+
+    type Stack[A] = Stck[A]
+    def empty[A]: Stack[A] = Stck(Nil())
     extension [A](stack: Stack[A])
-      def push(a: A): Stack[A] = ???
-      def pop(): Optional[(A, Stack[A])] = ???
-      def asSequence(): Sequence[A] = ???
+      def push(a: A): Stack[A] = Stck(Sequence.Cons(a, stack.stack))
+      def pop(): Optional[(A, Stack[A])] = stack.stack match
+        case Sequence.Nil() => Optional.Empty()
+        case Cons(head, tail) => Optional.Just((head, Stck(tail)))
+      def asSequence(): Sequence[A] = stack.stack
